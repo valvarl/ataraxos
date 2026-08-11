@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=64", "torch>=2.6", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ataraxos"
+version = "0.1.0"
+description = "Ataraxos: Superhuman AI for Stratego via Self-Play RL and Test-Time Search (arXiv:2511.07312 reproduction)"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Ataraxos Reproduction" }]
+dependencies = [
+    "torch>=2.6",
+    "numpy",
+    "pyyaml",
+    "tqdm",
+    "matplotlib",
+    "tensorboard",
+    "wandb",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff", "black", "mypy"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["csrc"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "N", "C4", "SIM"]
+ignore = ["E501"]  # line length handled by formatter
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["N802", "N803"]  # test functions can use camelCase / non-snake args
+
+[tool.black]
+line-length = 120
+target-version = ["py311"]
+extend-exclude = "/csrc/"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-ra --strict-markers"
+filterwarnings = [
+    "error::DeprecationWarning",
+    "ignore::UserWarning:torch.*",
+]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+exclude = ["csrc/", "build/", "dist/"]
+
+[[tool.mypy.overrides]]
+module = ["torch.*", "numpy.*", "matplotlib.*", "yaml.*", "tqdm.*"]
+ignore_missing_imports = true
